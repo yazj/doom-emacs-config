@@ -64,7 +64,7 @@
 
 ;; org-roam
 (after! org-roam
-  (setq org-roam-directory "~/org/roam")  ;; 笔记存放目录
+  (setq org-roam-directory "~/workstation/org/roam")  ;; 笔记存放目录
   (org-roam-db-autosync-mode))
 
 
@@ -150,7 +150,9 @@
   (setq org-modern-priority
         '((?A . (:foreground "#ff6c6b" :weight bold))
           (?B . (:foreground "#ECBE7B" :weight bold))
-          (?C . (:foreground "#98be65" :weight bold)))))
+          (?C . (:foreground "#98be65" :weight bold))))
+
+)
 
 
 (setq org-hide-emphasis-markers t)
@@ -175,6 +177,12 @@
 ;; ==============================
 
 (after! org
+
+  ;; 美化 deadline & scheduling 提示
+  (setq org-deadline-warning-days 7) ;; 提前一周提醒
+  (setq org-log-done 'time)          ;; DONE 记录完成时间
+  (setq org-log-into-drawer t)
+
   ;; 禁用org-superstar-mode
   (remove-hook 'org-mode-hook #'org-superstar-mode)
 
@@ -198,10 +206,81 @@
            :image-output-type "svg"
            :image-size-adjust (1.7 . 1.5)
            :latex-compiler ("latex -interaction nonstopmode -output-directory %o %f")
-           :image-converter ("dvisvgm %f -n -b min -c %S -o %O")))))
+           :image-converter ("dvisvgm %f -n -b min -c %S -o %O"))))
+
+)
+
 
 ;; ==============================
 ;; org-fragtog：光标进入显示源码，离开渲染公式
 ;; ==============================
 (use-package! org-fragtog
   :hook (org-mode . org-fragtog-mode))
+
+;; ==========================
+;; all-the-icons (美化图标)
+;; ==========================
+(use-package! all-the-icons)
+
+
+;; 启用 Org Super Agenda
+(use-package! org-super-agenda
+  :after org
+  :config
+  ;; 定义分组
+  (setq org-super-agenda-groups
+        '((:name "Today"
+                 :time-grid t
+                 :todo "TODAY"
+                 :order 0)
+          (:name "Important"
+                 :priority "A"
+                 :order 1)
+          (:name "Long-term"
+                 :todo ("SOMEDAY" "TO-READ" "CHECK" "TO-WATCH" "WATCHING")
+                 :tag "longterm"
+                 :order 2)
+          (:name "Work"
+                 :tag "work"
+                 :order 3)
+          (:name "Personal"
+                 :tag "personal"
+                 :order 4)
+          (:name "Study"
+                 :tag "study"
+                 :order 5)
+          (:name "Fun"
+                 :tag "fun"
+                 :order 6)))
+
+  ;; 启用 super agenda
+  (org-super-agenda-mode))
+
+;; TODO 状态颜色
+(setq org-todo-keyword-faces
+      '(("TODO"       . (:foreground "orange" :weight bold))
+        ("TODAY"      . (:foreground "deep sky blue" :weight bold))
+        ("WAITING"    . (:foreground "magenta" :weight bold))
+        ("DONE"       . (:foreground "green" :weight bold))
+        ("SOMEDAY"    . (:foreground "gray" :weight bold))
+        ("TO-READ"    . (:foreground "violet" :weight bold))
+        ("CHECK"      . (:foreground "gold" :weight bold))
+        ("TO-WATCH"   . (:foreground "cyan" :weight bold))
+        ("WATCHING"   . (:foreground "light green" :weight bold))))
+
+;; Agenda 前缀格式
+(setq org-agenda-prefix-format
+      '((agenda . " %i %-12:c%?-12t% s")
+        (todo   . " %i %-12:c [%e] ")
+        (tags   . " %i %-12:c [%e] ")
+        (search . " %i %-12:c [%e] ")))
+
+;; 隐藏标签
+(setq org-agenda-hide-tags-regexp ".*")
+
+;; 排序策略
+(setq org-agenda-sorting-strategy
+      '((agenda habit-down time-up priority-down category-keep)
+        (todo priority-down category-keep)
+        (tags priority-down category-keep)
+        (search category-keep)))

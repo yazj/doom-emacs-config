@@ -9,6 +9,10 @@
 (package! valign)
 (package! org-fragtog)
 
+;; org 美化 & agenda 相关插件
+(package! org-super-agenda)
+(package! all-the-icons)
+
 
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
 ;; (package! some-package)
