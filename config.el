@@ -62,6 +62,12 @@
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/workstation/org")
 
+;; org-roam
+(after! org-roam
+  (setq org-roam-directory "~/org/roam")  ;; 笔记存放目录
+  (org-roam-db-autosync-mode))
+
+
 ;;设置初始为emacs模式而不是evil
 (setq evil-default-state 'emacs)
 
@@ -96,8 +102,6 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
-
-(setq-default cursor-type 'bar)
 
 ;; ==============================
 ;; Org 美化配置
