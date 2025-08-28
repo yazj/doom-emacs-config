@@ -97,28 +97,57 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
+(setq-default cursor-type 'bar)
+
 ;; ==============================
 ;; Org 美化配置
 ;; ==============================
 
-;; org-modern
+
+;; 启用 org-modern
 (use-package! org-modern
   :hook (org-mode . org-modern-mode)
   :config
-  ;; 标题层级不同大小
-  (custom-set-faces
-   '(org-level-1 ((t (:height 1.3 :weight bold))))
-   '(org-level-2 ((t (:height 1.15 :weight semi-bold))))
-   '(org-level-3 ((t (:height 1.1 :weight semi-bold)))))
-  ;; 行距舒服一点
-  (setq line-spacing 0.15)
-  ;; 样式调整
-  (setq org-modern-star '("◉" "○" "▷" "✿" "✸" "◆")
-        org-modern-hide-stars t
-        org-modern-table t
-        org-modern-todo t
-        org-modern-timestamp t
-        org-modern-priority t))
+
+  ;; 星号替换（标题前的 bullet）
+  (setq org-modern-star '("◉" "○" "✿" "✸" "◆" "▶")) ;; 不同层级用不同符号
+
+  ;; 隐藏多余的星号，只显示一个
+  (setq org-modern-hide-stars 'leading)
+
+  ;; 美化 TODO 标签
+  (setq org-todo-keywords
+        '((sequence "⚪ TODO(t)" "🔵 NEXT(n)" "🟡 WAITING(w)" "|" "✅ DONE(d)" "❌ CANCELED(c)")))
+
+  (setq org-modern-todo-faces
+        '(("TODO"     . (:background "#ff6c6b" :foreground "white" :weight bold :box (:line-width (1 . 1) :style released-button)))
+          ("NEXT"     . (:background "#c678dd" :foreground "white" :weight bold :box (:line-width (1 . 1) :style released-button)))
+          ("WAITING"  . (:background "#ECBE7B" :foreground "black" :weight bold :box (:line-width (1 . 1) :style released-button)))
+          ("DONE"     . (:background "#98be65" :foreground "black" :weight bold :box (:line-width (1 . 1) :style released-button)))
+          ("CANCELED" . (:background "#5B6268" :foreground "white" :weight bold :box (:line-width (1 . 1) :style released-button)))))
+  (setq org-modern-todo-icon
+      '(("TODO" . "⚪")
+        ("NEXT" . "🔵")
+        ("WAITING" . "🟡")
+        ("DONE" . "✅")
+        ("CANCELED" . "❌")))
+
+  ;; 美化折叠符号
+  (setq org-ellipsis " ⤵ "
+        org-modern-ellipsis " ⤵ ")  ;; 美化折叠箭头
+
+  ;; 表格线美化
+  (setq org-modern-table nil) ;; 如果你用 org-modern-table，表格会更紧凑
+  (setq org-modern-horizontal-rule "────────────") ;; 分隔线样式
+
+  ;; 美化引用块 (quote / src)
+  (setq org-modern-block-name '("⟦" . "⟧")) ;; 代码块标题符号
+  (setq org-modern-keyword "⚙")             ;; #+KEYWORD 渲染符号
+  (setq org-modern-priority
+        '((?A . (:foreground "#ff6c6b" :weight bold))
+          (?B . (:foreground "#ECBE7B" :weight bold))
+          (?C . (:foreground "#98be65" :weight bold)))))
+
 
 (setq org-hide-emphasis-markers t)
 
@@ -142,6 +171,9 @@
 ;; ==============================
 
 (after! org
+  ;; 禁用org-superstar-mode
+  (remove-hook 'org-mode-hook #'org-superstar-mode)
+
   ;; 使用 dvisvgm 渲染公式（矢量高清）
   (setq org-preview-latex-default-process 'dvisvgm)
 

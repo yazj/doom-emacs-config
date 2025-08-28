@@ -157,7 +157,7 @@
        ;;ocaml             ; an objective camel
        ;;org               ; organize your plain life in plain text
        (org
-        +pretty    ; 美化：隐藏多余 *，标题变圆点
+        ;;+pretty    ; 美化：隐藏多余 *，标题变圆点
         +dragndrop ; 支持拖拽图片到 org buffer
         +roam2     ; Org-roam v2 知识管理（双向链接、笔记网络）
         +journal   ; org-journal 日记/日志管理
