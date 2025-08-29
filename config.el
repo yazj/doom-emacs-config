@@ -40,8 +40,16 @@
           :todo "✅ DONE" :order 99)))
 
 (setq auto-save-default t)
-(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+
+(if (eq initial-window-system 'x)                 ; if started by emacs command or desktop file
+    (toggle-frame-maximized)
+  (toggle-frame-fullscreen))
+
 (setq lsp-pyright-plugins-ruff-enabled t)
+
+(unless (equal "Battery status not available"
+               (battery))
+  (display-battery-mode 1))                           ; On laptops it's nice to know how much power you have
 
 ;;(use-package! dict
 ;;  :config
@@ -142,6 +150,19 @@
 
 (setq doom-modeline-env-enable-load-average nil)
 
+(after! doom-modeline
+  (setq doom-modeline-enable-word-count t
+        doom-modeline-header-line nil
+        ;doom-modeline-hud nil
+        doom-themes-padded-modeline t
+        doom-flatwhite-brighter-modeline nil
+        doom-plain-brighter-modeline nil))
+(add-hook! 'doom-modeline-mode-hook
+           (progn
+  (set-face-attribute 'header-line nil
+                      :background (face-background 'mode-line)
+                      :foreground (face-foreground 'mode-line))
+  ))
 
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
@@ -153,6 +174,10 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'tango)
+(add-hook! 'solaire-mode-hook
+  ;(set-face-attribute 'solaire-fringe-face nil :background (face-background 'solaire-hl-line-face))
+  (set-face-attribute 'fringe nil :background (face-background 'solaire-default-face))
+  )
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
