@@ -37,7 +37,7 @@
           :tag "website")
 
          (:name "Done"
-          :todo "DONE" :order 99)))
+          :todo "✅ DONE" :order 99)))
 
 (setq auto-save-default t)
 (add-to-list 'initial-frame-alist '(fullscreen . maximized))
@@ -68,16 +68,68 @@
 (setq doom-font (font-spec :family "Fira Code" :size 21 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "Fira Sans" :size 16))
 
-;; 中文字体设置
-(when (display-graphic-p)
-  (dolist (charset '(kana han symbol cjk-misc bopomofo))
-    (set-fontset-font t
-                      charset
-                      (font-spec :family "LXGW WenKai" :size 26))))
+;;中文字体设置
+(when (display-graphic-p) (dolist (charset '(kana han symbol cjk-misc bopomofo))
+        (set-fontset-font t charset (font-spec :family "LXGW WenKai" :size 26))))
+
+
+;; (when (display-graphic-p)
+;;   (dolist (charset '(kana han symbol cjk-misc bopomofo))
+;;     (set-fontset-font t
+;;                       charset
+;;                       (font-spec :family "Zhi Mang Xing" :size 26))))
 
 ;; 调整中英文对齐
 (setq face-font-rescale-alist
       '(("LXGW WenKai" . 1.4)))
+
+;;; 全局字体样式优化（Light 主题，柔和可读）
+
+;; -----------------------------
+;; 粗体文字：柔和绿色
+;; -----------------------------
+(set-face-attribute 'bold nil
+                    :foreground "#2e7d32"  ;; 柔和绿色，比原来亮度低
+                    :weight 'bold
+                    :underline nil
+                    :overline nil)
+
+;; -----------------------------
+;; 斜体文字：橙色，更明显可读
+;; -----------------------------
+(set-face-attribute 'italic nil
+                    :foreground "#b45309"  ;; 橙色，白底可读
+                    :slant 'italic
+                    :weight 'normal)
+
+;; -----------------------------
+;; 行内代码 / 等宽文本：浅黄背景，醒目
+;; -----------------------------
+(set-face-attribute 'fixed-pitch nil
+                    :foreground "#3a3a3a"
+                    :background "#fff9c4"
+                    :weight 'bold
+                    :box '(:line-width 1 :color "#ffeaa7" :style released-button)
+                    :slant 'normal)
+
+;; -----------------------------
+;; 引用块 quote：保留背景，只改变文字样式
+;; -----------------------------
+(set-face-attribute 'shadow nil
+                    :foreground "#6b7280"  ;; 仅改变文字颜色
+                    :background "#e0e0e0"
+                    :slant 'italic
+                    :weight 'normal)
+
+;; -----------------------------
+;; 链接和警告颜色优化
+;; -----------------------------
+(set-face-attribute 'link nil
+                    :foreground "#2563eb"
+                    :underline t)
+(set-face-attribute 'warning nil
+                    :foreground "#b91c1c"
+                    :weight 'bold)
 
 
 ;; 显示时间在 mode-line
@@ -263,6 +315,27 @@
 ;; ==============================
 
 (after! org
+
+  ;; 确保 quote/verse 使用独立 face
+  (setq org-fontify-quote-and-verse-blocks t)
+
+  ;; Quote block 样式
+  (set-face-attribute 'org-quote nil
+                      :font "Zhi Mang Xing"
+                      :foreground "#444444"
+                      :background "#e6e6e6"
+                      :slant 'italic
+                      :weight 'normal
+                      :height 1.2)
+
+  ;; Verse block 样式（保持一致）
+  (set-face-attribute 'org-verse nil
+                      :font "Zhi Mang Xing"
+                      :foreground "#444444"
+                      :background "#e6e6e6"
+                      :slant 'italic
+                      :weight 'normal
+                      :height 1.2)
 
   (setq org-modern-priority nil)
   ;; 美化 deadline & scheduling 提示
