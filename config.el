@@ -3,6 +3,42 @@
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
 
+;; 使用 setq! 全局设置分组
+(setq! org-super-agenda-groups
+       '((:name "Today"
+          :time-grid t
+          :todo "🟠 TODAY")
+
+         (:name "Important"
+          :priority "A")
+
+         (:name "Start"
+          :todo "▶️ START")
+
+         (:name "Next Actions"
+          :todo "🔵 NEXT") ; 还没做，但近期要做的任务
+
+         (:name "Waiting"
+          :todo "🟡 WAITING") ; 等别人、外部条件的任务
+
+         (:name "Longterm"
+          :todo ("🔺 LONGTERM"))
+
+         (:name "Work"
+          :tag "work")
+
+         (:name "Personal"
+          :tag "personal")
+
+         (:name "Reading"
+          :tag "reading")
+
+         (:name "Website"
+          :tag "website")
+
+         (:name "Done"
+          :todo "DONE" :order 99)))
+
 (setq auto-save-default t)
 (add-to-list 'initial-frame-alist '(fullscreen . maximized))
 (setq lsp-pyright-plugins-ruff-enabled t)
@@ -42,6 +78,18 @@
 ;; 调整中英文对齐
 (setq face-font-rescale-alist
       '(("LXGW WenKai" . 1.4)))
+
+
+;; 显示时间在 mode-line
+(display-time-mode 1)
+
+;; 时间显示格式（可选）
+(display-time-mode 1)
+(setq display-time-24hr-format t)
+(setq display-time-format "%Y-%m-%d %H:%M")  ;; 年-月-日 时:分
+
+(setq doom-modeline-env-enable-load-average nil)
+
 
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
@@ -119,22 +167,60 @@
   ;; 隐藏多余的星号，只显示一个
   (setq org-modern-hide-stars 'leading)
 
-  ;; 美化 TODO 标签
-  (setq org-todo-keywords
-        '((sequence "⚪ TODO(t)" "🔵 NEXT(n)" "🟡 WAITING(w)" "|" "✅ DONE(d)" "❌ CANCELED(c)")))
+;; ==============================
+;; 美化 TODO 标签 + emoji + 颜色（含历史状态）
+;; ==============================
 
-  (setq org-modern-todo-faces
-        '(("TODO"     . (:background "#ff6c6b" :foreground "white" :weight bold :box (:line-width (1 . 1) :style released-button)))
-          ("NEXT"     . (:background "#c678dd" :foreground "white" :weight bold :box (:line-width (1 . 1) :style released-button)))
-          ("WAITING"  . (:background "#ECBE7B" :foreground "black" :weight bold :box (:line-width (1 . 1) :style released-button)))
-          ("DONE"     . (:background "#98be65" :foreground "black" :weight bold :box (:line-width (1 . 1) :style released-button)))
-          ("CANCELED" . (:background "#5B6268" :foreground "white" :weight bold :box (:line-width (1 . 1) :style released-button)))))
-  (setq org-modern-todo-icon
-      '(("TODO" . "⚪")
-        ("NEXT" . "🔵")
-        ("WAITING" . "🟡")
-        ("DONE" . "✅")
-        ("CANCELED" . "❌")))
+;; 定义 TODO 状态序列
+(setq org-todo-keywords
+      '((sequence
+         "⚪ TODO(t)"
+         "🟠 TODAY(y)"
+         "🔵 NEXT(n)"
+         "▶️ START(s)"
+         "🟡 WAITING(w)"
+         "🔺 LONGTERM(l)"
+         "|"
+         "✅ DONE(d)"
+         "❌ CANCELED(c)"
+         "🔁 LOOP(p)"
+         "✋ HOLD(h)"
+         "👌 OKAY(o)"
+         "✔️ YES(u)"
+         "❌ NO(k)")))
+
+;; 为每个 TODO 状态设置颜色和边框
+(setq org-modern-todo-faces
+      '(("TODO"     . (:background "#ff6c6b" :foreground "white" :weight bold :box (:line-width (1 . 1) :style released-button)))
+        ("TODAY"    . (:background "#da8548" :foreground "white" :weight bold :box (:line-width (1 . 1) :style released-button)))
+        ("NEXT"     . (:background "#c678dd" :foreground "white" :weight bold :box (:line-width (1 . 1) :style released-button)))
+        ("START"    . (:background "#ff5555" :foreground "white" :weight bold :box (:line-width (1 . 1) :style released-button)))
+        ("WAITING"  . (:background "#ECBE7B" :foreground "black" :weight bold :box (:line-width (1 . 1) :style released-button)))
+        ("LONGTERM" . (:background "#46d9ff" :foreground "black" :weight bold :box (:line-width (1 . 1) :style released-button)))
+        ("DONE"     . (:background "#98be65" :foreground "black" :weight bold :box (:line-width (1 . 1) :style released-button)))
+        ("CANCELED" . (:background "#5B6268" :foreground "white" :weight bold :box (:line-width (1 . 1) :style released-button)))
+        ("LOOP"     . (:background "#ff79c6" :foreground "black" :weight bold :box (:line-width (1 . 1) :style released-button)))
+        ("HOLD"     . (:background "#ffb86c" :foreground "black" :weight bold :box (:line-width (1 . 1) :style released-button)))
+        ("OKAY"     . (:background "#8be9fd" :foreground "black" :weight bold :box (:line-width (1 . 1) :style released-button)))
+        ("YES"      . (:background "#50fa7b" :foreground "black" :weight bold :box (:line-width (1 . 1) :style released-button)))
+        ("NO"       . (:background "#ff5555" :foreground "white" :weight bold :box (:line-width (1 . 1) :style released-button)))))
+
+;; 为每个 TODO 状态设置 emoji 图标
+(setq org-modern-todo-icon
+      '(("TODO"     . "⚪")
+        ("TODAY"    . "🟠")
+        ("NEXT"     . "🔵")
+        ("START"    . "▶️")
+        ("WAITING"  . "🟡")
+        ("LONGTERM" . "🔺")
+        ("DONE"     . "✅")
+        ("CANCELED" . "❌")
+        ("LOOP"     . "🔁")
+        ("HOLD"     . "✋")
+        ("OKAY"     . "👌")
+        ("YES"      . "✔️")
+        ("NO"       . "❌")))
+
 
   ;; 美化折叠符号
   (setq org-ellipsis " ⤵ "
@@ -178,6 +264,7 @@
 
 (after! org
 
+  (setq org-modern-priority nil)
   ;; 美化 deadline & scheduling 提示
   (setq org-deadline-warning-days 7) ;; 提前一周提醒
   (setq org-log-done 'time)          ;; DONE 记录完成时间
@@ -222,65 +309,17 @@
 ;; ==========================
 (use-package! all-the-icons)
 
-
-;; 启用 Org Super Agenda
 (use-package! org-super-agenda
-  :after org
+  :after org-agenda
+  :init
+  (setq org-agenda-skip-scheduled-if-done t
+      org-agenda-skip-deadline-if-done t
+      org-agenda-include-deadlines t
+      org-agenda-block-separator nil
+      org-agenda-compact-blocks t
+      org-agenda-start-day nil ;; i.e. today
+      org-agenda-span 1
+      org-agenda-start-on-weekday nil)
   :config
-  ;; 定义分组
-  (setq org-super-agenda-groups
-        '((:name "Today"
-                 :time-grid t
-                 :todo "TODAY"
-                 :order 0)
-          (:name "Important"
-                 :priority "A"
-                 :order 1)
-          (:name "Long-term"
-                 :todo ("SOMEDAY" "TO-READ" "CHECK" "TO-WATCH" "WATCHING")
-                 :tag "longterm"
-                 :order 2)
-          (:name "Work"
-                 :tag "work"
-                 :order 3)
-          (:name "Personal"
-                 :tag "personal"
-                 :order 4)
-          (:name "Study"
-                 :tag "study"
-                 :order 5)
-          (:name "Fun"
-                 :tag "fun"
-                 :order 6)))
-
-  ;; 启用 super agenda
   (org-super-agenda-mode))
 
-;; TODO 状态颜色
-(setq org-todo-keyword-faces
-      '(("TODO"       . (:foreground "orange" :weight bold))
-        ("TODAY"      . (:foreground "deep sky blue" :weight bold))
-        ("WAITING"    . (:foreground "magenta" :weight bold))
-        ("DONE"       . (:foreground "green" :weight bold))
-        ("SOMEDAY"    . (:foreground "gray" :weight bold))
-        ("TO-READ"    . (:foreground "violet" :weight bold))
-        ("CHECK"      . (:foreground "gold" :weight bold))
-        ("TO-WATCH"   . (:foreground "cyan" :weight bold))
-        ("WATCHING"   . (:foreground "light green" :weight bold))))
-
-;; Agenda 前缀格式
-(setq org-agenda-prefix-format
-      '((agenda . " %i %-12:c%?-12t% s")
-        (todo   . " %i %-12:c [%e] ")
-        (tags   . " %i %-12:c [%e] ")
-        (search . " %i %-12:c [%e] ")))
-
-;; 隐藏标签
-(setq org-agenda-hide-tags-regexp ".*")
-
-;; 排序策略
-(setq org-agenda-sorting-strategy
-      '((agenda habit-down time-up priority-down category-keep)
-        (todo priority-down category-keep)
-        (tags priority-down category-keep)
-        (search category-keep)))
