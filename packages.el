@@ -5,14 +5,9 @@
 ;; on the command line, then restart Emacs for the changes to take effect -- or
 
 (package! org-modern)
-(package! org-appear)
-(package! valign)
 (package! org-fragtog)
-
-;; org 美化 & agenda 相关插件
-(package! org-super-agenda)
 (package! all-the-icons)
-
+(package! org-super-agenda)
 
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
 ;; (package! some-package)

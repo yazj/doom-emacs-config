@@ -1,3 +1,0 @@
-# Doom Emacs Config
-
-

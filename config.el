@@ -3,6 +3,158 @@
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
 
+
+;; Some functionality uses this to identify you, e.g. GPG configuration, email
+;; clients, file templates and snippets. It is optional.
+;; (setq user-full-name "John Doe"
+;;       user-mail-address "john@doe.com")
+
+;; Doom exposes five (optional) variables for controlling fonts in Doom:
+;;
+;; - `doom-font' -- the primary font to use
+;; - `doom-variable-pitch-font' -- a non-monospace font (where applicable)
+;; - `doom-big-font' -- used for `doom-big-font-mode'; use this for
+;;   presentations or streaming.
+;; - `doom-symbol-font' -- for symbols
+;; - `doom-serif-font' -- for the `fixed-pitch-serif' face
+;;
+;; See 'C-h v doom-font' for documentation and more examples of what they
+;; accept. For example:
+;;
+;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
+;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
+;;
+;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
+;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
+;; refresh your font settings. If Emacs still can't find your font, it likely
+;; wasn't installed correctly. Font issues are rarely Doom issues!
+
+;; There are two ways to load a theme. Both assume the theme is installed and
+;; available. You can either set `doom-theme' or manually load a theme with the
+;; `load-theme' function. This is the default:
+(setq doom-theme 'tango)
+
+;; This determines the style of line numbers in effect. If set to `nil', line
+;; numbers are disabled. For relative line numbers, set this to `relative'.
+(setq display-line-numbers-type t)
+
+;; If you use `org' and don't want your org files in the default location below,
+;; change `org-directory'. It must be set before org loads!
+(setq org-directory "~/workstation/org/todos/")
+
+
+;; Whenever you reconfigure a package, make sure to wrap your config in an
+;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
+;;
+;;   (after! PACKAGE
+;;     (setq x y))
+;;
+;; The exceptions to this rule:
+;;
+;;   - Setting file/directory variables (like `org-directory')
+;;   - Setting variables which explicitly tell you to set them before their
+;;     package is loaded (see 'C-h v VARIABLE' to look up their documentation).
+;;   - Setting doom variables (which start with 'doom-' or '+').
+;;
+;; Here are some additional functions/macros that will help you configure Doom.
+;;
+;; - `load!' for loading external *.el files relative to this one
+;; - `use-package!' for configuring packages
+;; - `after!' for running code after a package has loaded
+;; - `add-load-path!' for adding directories to the `load-path', relative to
+;;   this file. Emacs searches the `load-path' when you load packages with
+;;   `require' or `use-package'.
+;; - `map!' for binding new keys
+;;
+;; To get information about any of these functions/macros, move the cursor over
+;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
+;; This will open documentation for it, including demos of how they are used.
+;; Alternatively, use `C-h o' to look up a symbol (functions, variables, faces,
+;; etc).
+;;
+;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
+;; they are implemented.
+;;
+;; ========================================================
+;;
+
+;; ==================
+;; emacs配置
+;; ==================
+
+;;设置初始为emacs模式而不是evil
+(setq evil-default-state 'emacs)
+
+;; 设置自动保存
+(setq auto-save-default t)
+
+;; 启动自动全屏并且最大化
+(if (eq initial-window-system 'x)
+    (toggle-frame-maximized)
+  (toggle-frame-fullscreen))
+
+(global-set-key (kbd "C-c C-p") #'+treemacs/toggle)
+
+;; =================
+;; 字体和界面
+;; =================
+
+;; mode-line 显示电池剩余电量
+(unless (equal "Battery status not available"
+               (battery))
+  (display-battery-mode 1))
+
+;; mode-line 显示时间
+(display-time-mode 1)
+(setq display-time-24hr-format t)
+(setq display-time-format "%Y-%m-%d %H:%M")  ;; 年-月-日 时:分
+
+;; 字体设置
+(setq doom-font (font-spec :family "Fira Code" :size 20 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 16))
+;; 中文字体设置
+(when (display-graphic-p) (dolist (charset '(kana han symbol cjk-misc bopomofo))
+        (set-fontset-font t charset (font-spec :family "LXGW WenKai" :size 26))))
+;; 调整中英文对齐
+(setq face-font-rescale-alist
+      '(("LXGW WenKai" . 1.4)))
+;; 全局字体优化
+(set-face-attribute 'bold nil
+                    :foreground "#2e7d32"  ;; 柔和绿色，比原来亮度低
+                    :weight 'bold
+                    :underline nil
+                    :overline nil)
+(set-face-attribute 'italic nil
+                    :foreground "#b45309"  ;; 橙色，白底可读
+                    :slant 'italic
+                    :weight 'normal)
+(set-face-attribute 'fixed-pitch nil
+                    :foreground "#3a3a3a"
+                    :background "#fff9c4"
+                    :weight 'bold
+                    :box '(:line-width 1 :color "#ffeaa7" :style released-button)
+                    :slant 'normal)
+;; (set-face-attribute 'shadow nil
+;;                     :foreground "#6b7280"  ;; 仅改变文字颜色
+;;                     :background "#e0e0e0"
+;;                     :slant 'italic
+;;                     :weight 'normal)
+(set-face-attribute 'link nil
+                    :foreground "#2563eb"
+                    :underline t)
+(set-face-attribute 'warning nil
+                    :foreground "#b91c1c"
+                    :weight 'bold)
+
+;; =================
+;; package配置
+;; =================
+
+;; org-roam
+(after! org-roam
+  (setq org-roam-directory "~/workstation/org/roam")  ;; 笔记存放目录
+  (org-roam-db-autosync-mode))
+
 ;; 使用 setq! 全局设置分组
 (setq! org-super-agenda-groups
        '((:name "Today"
@@ -38,200 +190,6 @@
 
          (:name "Done"
           :todo "✅ DONE" :order 99)))
-
-(setq auto-save-default t)
-
-(if (eq initial-window-system 'x)                 ; if started by emacs command or desktop file
-    (toggle-frame-maximized)
-  (toggle-frame-fullscreen))
-
-(setq lsp-pyright-plugins-ruff-enabled t)
-
-(unless (equal "Battery status not available"
-               (battery))
-  (display-battery-mode 1))                           ; On laptops it's nice to know how much power you have
-
-;;(use-package! dict
-;;  :config
-;;  (setq dict-server "dict.org")
-;;  (setq dict-lookup-function 'dict-search))
-
-;; Some functionality uses this to identify you, e.g. GPG configuration, email
-;; clients, file templates and snippets. It is optional.
-;; (setq user-full-name "John Doe"
-;;       user-mail-address "john@doe.com")
-
-;; Doom exposes five (optional) variables for controlling fonts in Doom:
-;;
-;; - `doom-font' -- the primary font to use
-;; - `doom-variable-pitch-font' -- a non-monospace font (where applicable)
-;; - `doom-big-font' -- used for `doom-big-font-mode'; use this for
-;;   presentations or streaming.
-;; - `doom-symbol-font' -- for symbols
-;; - `doom-serif-font' -- for the `fixed-pitch-serif' face
-;;
-;; See 'C-h v doom-font' for documentation and more examples of what they
-;; accept. For example:
-;;
-(setq doom-font (font-spec :family "Fira Code" :size 21 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 16))
-
-;;中文字体设置
-(when (display-graphic-p) (dolist (charset '(kana han symbol cjk-misc bopomofo))
-        (set-fontset-font t charset (font-spec :family "LXGW WenKai" :size 26))))
-
-
-;; (when (display-graphic-p)
-;;   (dolist (charset '(kana han symbol cjk-misc bopomofo))
-;;     (set-fontset-font t
-;;                       charset
-;;                       (font-spec :family "Zhi Mang Xing" :size 26))))
-
-;; 调整中英文对齐
-(setq face-font-rescale-alist
-      '(("LXGW WenKai" . 1.4)))
-
-;;; 全局字体样式优化（Light 主题，柔和可读）
-
-;; -----------------------------
-;; 粗体文字：柔和绿色
-;; -----------------------------
-(set-face-attribute 'bold nil
-                    :foreground "#2e7d32"  ;; 柔和绿色，比原来亮度低
-                    :weight 'bold
-                    :underline nil
-                    :overline nil)
-
-;; -----------------------------
-;; 斜体文字：橙色，更明显可读
-;; -----------------------------
-(set-face-attribute 'italic nil
-                    :foreground "#b45309"  ;; 橙色，白底可读
-                    :slant 'italic
-                    :weight 'normal)
-
-;; -----------------------------
-;; 行内代码 / 等宽文本：浅黄背景，醒目
-;; -----------------------------
-(set-face-attribute 'fixed-pitch nil
-                    :foreground "#3a3a3a"
-                    :background "#fff9c4"
-                    :weight 'bold
-                    :box '(:line-width 1 :color "#ffeaa7" :style released-button)
-                    :slant 'normal)
-
-;; -----------------------------
-;; 引用块 quote：保留背景，只改变文字样式
-;; -----------------------------
-(set-face-attribute 'shadow nil
-                    :foreground "#6b7280"  ;; 仅改变文字颜色
-                    :background "#e0e0e0"
-                    :slant 'italic
-                    :weight 'normal)
-
-;; -----------------------------
-;; 链接和警告颜色优化
-;; -----------------------------
-(set-face-attribute 'link nil
-                    :foreground "#2563eb"
-                    :underline t)
-(set-face-attribute 'warning nil
-                    :foreground "#b91c1c"
-                    :weight 'bold)
-
-
-;; 显示时间在 mode-line
-(display-time-mode 1)
-
-;; 时间显示格式（可选）
-(display-time-mode 1)
-(setq display-time-24hr-format t)
-(setq display-time-format "%Y-%m-%d %H:%M")  ;; 年-月-日 时:分
-
-(setq doom-modeline-env-enable-load-average nil)
-
-(after! doom-modeline
-  (setq doom-modeline-enable-word-count t
-        doom-modeline-header-line nil
-        ;doom-modeline-hud nil
-        doom-themes-padded-modeline t
-        doom-flatwhite-brighter-modeline nil
-        doom-plain-brighter-modeline nil))
-(add-hook! 'doom-modeline-mode-hook
-           (progn
-  (set-face-attribute 'header-line nil
-                      :background (face-background 'mode-line)
-                      :foreground (face-foreground 'mode-line))
-  ))
-
-;;
-;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
-;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
-;; refresh your font settings. If Emacs still can't find your font, it likely
-;; wasn't installed correctly. Font issues are rarely Doom issues!
-
-;; There are two ways to load a theme. Both assume the theme is installed and
-;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function. This is the default:
-(setq doom-theme 'tango)
-(add-hook! 'solaire-mode-hook
-  ;(set-face-attribute 'solaire-fringe-face nil :background (face-background 'solaire-hl-line-face))
-  (set-face-attribute 'fringe nil :background (face-background 'solaire-default-face))
-  )
-
-;; This determines the style of line numbers in effect. If set to `nil', line
-;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type t)
-
-;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/workstation/org")
-
-;; org-roam
-(after! org-roam
-  (setq org-roam-directory "~/workstation/org/roam")  ;; 笔记存放目录
-  (org-roam-db-autosync-mode))
-
-
-;;设置初始为emacs模式而不是evil
-(setq evil-default-state 'emacs)
-
-;; Whenever you reconfigure a package, make sure to wrap your config in an
-;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
-;;
-;;   (after! PACKAGE
-;;     (setq x y))
-;;
-;; The exceptions to this rule:
-;;
-;;   - Setting file/directory variables (like `org-directory')
-;;   - Setting variables which explicitly tell you to set them before their
-;;     package is loaded (see 'C-h v VARIABLE' to look up their documentation).
-;;   - Setting doom variables (which start with 'doom-' or '+').
-;;
-;; Here are some additional functions/macros that will help you configure Doom.
-;;
-;; - `load!' for loading external *.el files relative to this one
-;; - `use-package!' for configuring packages
-;; - `after!' for running code after a package has loaded
-;; - `add-load-path!' for adding directories to the `load-path', relative to
-;;   this file. Emacs searches the `load-path' when you load packages with
-;;   `require' or `use-package'.
-;; - `map!' for binding new keys
-;;
-;; To get information about any of these functions/macros, move the cursor over
-;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
-;; This will open documentation for it, including demos of how they are used.
-;; Alternatively, use `C-h o' to look up a symbol (functions, variables, faces,
-;; etc).
-;;
-;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
-;; they are implemented.
-
-;; ==============================
-;; Org 美化配置
-;; ==============================
-
 
 ;; 启用 org-modern
 (use-package! org-modern
@@ -316,14 +274,7 @@
           (?C . (:foreground "#98be65" :weight bold))))
 
 )
-
-
 (setq org-hide-emphasis-markers t)
-
-;; valign：表格对齐（尤其是中日韩字符）
-(use-package! valign
-  :hook (org-mode . valign-mode))
-
 ;; Org 层级缩进，看起来更有结构感
 (setq org-startup-indented t)
 
@@ -420,4 +371,3 @@
       org-agenda-start-on-weekday nil)
   :config
   (org-super-agenda-mode))
-
