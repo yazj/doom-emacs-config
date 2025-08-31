@@ -40,7 +40,7 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/workstation/org/todos/")
+(setq org-directory "~/workstation/org/todo/")
 
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
@@ -174,6 +174,16 @@
          :if-new
          (file+head "articles/${title}.org" "#+title: ${title}\n#+filetags: :article:\n")
          :immediate-finish t
+         :unnarrowed t)
+          ("b" "books" plain "%?"
+         :if-new
+         (file+head "articles/books/${title}.org" "#+title: ${title}\n#+filetags: :book:\n")
+         :immediate-finish t
+         :unnarrowed t)
+          ("p" "people" plain "%?"
+         :if-new
+         (file+head "reference/people/${title}.org" "#+title: ${title}\n#+filetags: :people:\n")
+         :immediate-finish t
          :unnarrowed t)))
 
   (cl-defmethod org-roam-node-type ((node org-roam-node))
@@ -206,10 +216,8 @@
           :tag "personal")
          (:name "Work"
           :tag "work")
-         (:name "Article"
-          :tag "article")
-         (:name "Reference"
-          :tag "reference")
+         (:name "Study"
+          :tag "study")
          (:name "Done"
           :todo "DONE" :order 99)))
 
