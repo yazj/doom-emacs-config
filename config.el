@@ -152,44 +152,65 @@
 
 ;; org-roam
 (after! org-roam
-  (setq org-roam-directory "~/workstation/org/roam")  ;; 笔记存放目录
-  (org-roam-db-autosync-mode))
+  (setq org-roam-directory (file-truename "~/workstation/org/"))
+  (org-roam-db-autosync-mode 1)
+  (setq org-roam-capture-templates
+        '(("m" "main" plain
+         "%?"
+         :if-new (file+head "main/${slug}.org"
+                            "#+title: ${title}\n")
+         :immediate-finish t
+         :unnarrowed t)
+         ("d" "default" plain "%?"
+         :if-new (file+head "main/node/${slug}.org"
+                            "#+title: ${title}\n#+created: %U\n")
+         :unnarrowed t)
+         ("r" "reference" plain "%?"
+         :if-new
+         (file+head "reference/${title}.org" "#+title: ${title}\n")
+         :immediate-finish t
+         :unnarrowed t)
+         ("a" "article" plain "%?"
+         :if-new
+         (file+head "articles/${title}.org" "#+title: ${title}\n#+filetags: :article:\n")
+         :immediate-finish t
+         :unnarrowed t)))
+
+  (cl-defmethod org-roam-node-type ((node org-roam-node))
+    "Return the TYPE of NODE."
+    (condition-case nil
+        (file-name-nondirectory
+         (directory-file-name
+          (file-name-directory
+           (file-relative-name (org-roam-node-file node) org-roam-directory))))
+      (error "")))
+
+  (setq org-roam-node-display-template
+      (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+)
 
 ;; 使用 setq! 全局设置分组
 (setq! org-super-agenda-groups
        '((:name "Today"
-          :time-grid t
-          :todo "🟠 TODAY")
-
+          :time-grid t)
          (:name "Important"
           :priority "A")
-
          (:name "Start"
-          :todo "▶️ START")
-
+          :todo "START")
          (:name "Next Actions"
-          :todo "🔵 NEXT") ; 还没做，但近期要做的任务
-
+          :todo "NEXT") ; 还没做，但近期要做的任务
          (:name "Waiting"
-          :todo "🟡 WAITING") ; 等别人、外部条件的任务
-
-         (:name "Longterm"
-          :todo ("🔺 LONGTERM"))
-
-         (:name "Work"
-          :tag "work")
-
+          :todo "WAITING") ; 等别人、外部条件的任务
          (:name "Personal"
           :tag "personal")
-
-         (:name "Reading"
-          :tag "reading")
-
-         (:name "Website"
-          :tag "website")
-
+         (:name "Work"
+          :tag "work")
+         (:name "Article"
+          :tag "article")
+         (:name "Reference"
+          :tag "reference")
          (:name "Done"
-          :todo "✅ DONE" :order 99)))
+          :todo "DONE" :order 99)))
 
 ;; 启用 org-modern
 (use-package! org-modern
@@ -201,60 +222,6 @@
 
   ;; 隐藏多余的星号，只显示一个
   (setq org-modern-hide-stars 'leading)
-
-;; ==============================
-;; 美化 TODO 标签 + emoji + 颜色（含历史状态）
-;; ==============================
-
-;; 定义 TODO 状态序列
-(setq org-todo-keywords
-      '((sequence
-         "⚪ TODO(t)"
-         "🟠 TODAY(y)"
-         "🔵 NEXT(n)"
-         "▶️ START(s)"
-         "🟡 WAITING(w)"
-         "🔺 LONGTERM(l)"
-         "|"
-         "✅ DONE(d)"
-         "❌ CANCELED(c)"
-         "🔁 LOOP(p)"
-         "✋ HOLD(h)"
-         "👌 OKAY(o)"
-         "✔️ YES(u)"
-         "❌ NO(k)")))
-
-;; 为每个 TODO 状态设置颜色和边框
-(setq org-modern-todo-faces
-      '(("TODO"     . (:background "#ff6c6b" :foreground "white" :weight bold :box (:line-width (1 . 1) :style released-button)))
-        ("TODAY"    . (:background "#da8548" :foreground "white" :weight bold :box (:line-width (1 . 1) :style released-button)))
-        ("NEXT"     . (:background "#c678dd" :foreground "white" :weight bold :box (:line-width (1 . 1) :style released-button)))
-        ("START"    . (:background "#ff5555" :foreground "white" :weight bold :box (:line-width (1 . 1) :style released-button)))
-        ("WAITING"  . (:background "#ECBE7B" :foreground "black" :weight bold :box (:line-width (1 . 1) :style released-button)))
-        ("LONGTERM" . (:background "#46d9ff" :foreground "black" :weight bold :box (:line-width (1 . 1) :style released-button)))
-        ("DONE"     . (:background "#98be65" :foreground "black" :weight bold :box (:line-width (1 . 1) :style released-button)))
-        ("CANCELED" . (:background "#5B6268" :foreground "white" :weight bold :box (:line-width (1 . 1) :style released-button)))
-        ("LOOP"     . (:background "#ff79c6" :foreground "black" :weight bold :box (:line-width (1 . 1) :style released-button)))
-        ("HOLD"     . (:background "#ffb86c" :foreground "black" :weight bold :box (:line-width (1 . 1) :style released-button)))
-        ("OKAY"     . (:background "#8be9fd" :foreground "black" :weight bold :box (:line-width (1 . 1) :style released-button)))
-        ("YES"      . (:background "#50fa7b" :foreground "black" :weight bold :box (:line-width (1 . 1) :style released-button)))
-        ("NO"       . (:background "#ff5555" :foreground "white" :weight bold :box (:line-width (1 . 1) :style released-button)))))
-
-;; 为每个 TODO 状态设置 emoji 图标
-(setq org-modern-todo-icon
-      '(("TODO"     . "⚪")
-        ("TODAY"    . "🟠")
-        ("NEXT"     . "🔵")
-        ("START"    . "▶️")
-        ("WAITING"  . "🟡")
-        ("LONGTERM" . "🔺")
-        ("DONE"     . "✅")
-        ("CANCELED" . "❌")
-        ("LOOP"     . "🔁")
-        ("HOLD"     . "✋")
-        ("OKAY"     . "👌")
-        ("YES"      . "✔️")
-        ("NO"       . "❌")))
 
 
   ;; 美化折叠符号
@@ -292,26 +259,19 @@
 
 (after! org
 
-  ;; 确保 quote/verse 使用独立 face
-  (setq org-fontify-quote-and-verse-blocks t)
+   (setq org-capture-templates
+         '(("s" "Slipbox" entry (file "~/workstation/org/inbox.org")
+            "* %?\n")
+          ("t" "Todo" entry
+           (file "~/workstation/org/todo/todo.org")
+           "* TODO %U %?\n")))
 
-  ;; Quote block 样式
-  (set-face-attribute 'org-quote nil
-                      :font "Zhi Mang Xing"
-                      :foreground "#444444"
-                      :background "#e6e6e6"
-                      :slant 'italic
-                      :weight 'normal
-                      :height 1.2)
+   (defun my/org-capture-slipbox ()
+     (interactive)
+     (org-capture nil "s"))
 
-  ;; Verse block 样式（保持一致）
-  (set-face-attribute 'org-verse nil
-                      :font "Zhi Mang Xing"
-                      :foreground "#444444"
-                      :background "#e6e6e6"
-                      :slant 'italic
-                      :weight 'normal
-                      :height 1.2)
+   (setq org-agenda-files (directory-files-recursively "~/workstation/org/" "\\.org$"))
+
 
   (setq org-modern-priority nil)
   ;; 美化 deadline & scheduling 提示
