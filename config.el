@@ -158,16 +158,16 @@
         '(("m" "main" plain
          "%?"
          :if-new (file+head "main/${slug}.org"
-                            "#+title: ${title}\n")
+                            "#+title: ${title}\n#+filetags: :main:\n")
          :immediate-finish t
          :unnarrowed t)
          ("d" "default" plain "%?"
          :if-new (file+head "main/node/${slug}.org"
-                            "#+title: ${title}\n#+created: %U\n")
+                            "#+title: ${title}\n#+created: %U\n#+filetags: :node:\n")
          :unnarrowed t)
          ("r" "reference" plain "%?"
          :if-new
-         (file+head "reference/${title}.org" "#+title: ${title}\n")
+         (file+head "reference/${title}.org" "#+title: ${title}\n#+filetags: :reference:\n")
          :immediate-finish t
          :unnarrowed t)
          ("a" "article" plain "%?"
@@ -327,3 +327,18 @@
       org-agenda-start-on-weekday nil)
   :config
   (org-super-agenda-mode))
+
+(use-package! websocket
+    :after org-roam)
+
+(use-package! org-roam-ui
+    :after org-roam ;; or :after org
+;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+;;         a hookable mode anymore, you're advised to pick something yourself
+;;         if you don't care about startup time, use
+;;  :hook (after-init . org-roam-ui-mode)
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start t))

@@ -9,6 +9,10 @@
 (package! all-the-icons)
 (package! org-super-agenda)
 
+;; https://github.com/org-roam/org-roam-ui?tab=readme-ov-file#doom
+(unpin! org-roam)
+(package! org-roam-ui)
+
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
 ;; (package! some-package)
 
