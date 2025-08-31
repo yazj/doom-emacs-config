@@ -187,6 +187,7 @@
 
   (setq org-roam-node-display-template
       (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+
 )
 
 ;; 使用 setq! 全局设置分组
@@ -247,11 +248,6 @@
 
 ;; 默认折叠内容，保持整洁
 (setq org-startup-folded t)
-
-;; Org 快捷键绑定
-(map! :after org
-      :map org-mode-map
-      "C-c %" #'org-mark-ring-goto)
 
 ;; ==============================
 ;; Org LaTeX 配置
