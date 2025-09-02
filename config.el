@@ -213,6 +213,8 @@
           :todo "NEXT") ; 还没做，但近期要做的任务
          (:name "Waiting"
           :todo "WAITING") ; 等别人、外部条件的任务
+         (:name "Journal"
+          :tag "journal")
          (:name "Personal"
           :tag "personal")
          (:name "Project"
@@ -241,6 +243,9 @@
         org-modern-ellipsis " ⤵ ")  ;; 美化折叠箭头
 
   ;; 表格线美化
+
+
+
   (setq org-modern-table nil) ;; 如果你用 org-modern-table，表格会更紧凑
   (setq org-modern-horizontal-rule "────────────") ;; 分隔线样式
 
@@ -271,8 +276,10 @@
             "* %?\n")
            ("p" "Project" entry (file "~/workstation/org/todo/project.org")
             "* TODO  %? :project: \n")
-          ("t" "Todo" entry
-           (file "~/workstation/org/todo/todo.org")
+           ("j" "journal" entry (file "~/workstation/org/todo/journal.org")
+            "* TODO  %U :journal:  %?\n")
+           ("t" "Todo" entry
+            (file "~/workstation/org/todo/todo.org")
            "* TODO %U %?\n")))
 
    (defun my/org-capture-slipbox ()
