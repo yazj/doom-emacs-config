@@ -104,6 +104,7 @@
                (battery))
   (display-battery-mode 1))
 
+
 ;; mode-line 显示时间
 (display-time-mode 1)
 (setq display-time-24hr-format t)
@@ -120,25 +121,25 @@
       '(("LXGW WenKai" . 1.4)))
 ;; 全局字体优化
 (set-face-attribute 'bold nil
-                    :foreground "#2e7d32"  ;; 柔和绿色，比原来亮度低
+                    :foreground "#2874A6" ;; "#2e7d32"
                     :weight 'bold
                     :underline nil
                     :overline nil)
 (set-face-attribute 'italic nil
-                    :foreground "#b45309"  ;; 橙色，白底可读
+                    :foreground "#9B59B6"
                     :slant 'italic
                     :weight 'normal)
 (set-face-attribute 'fixed-pitch nil
                     :foreground "#3a3a3a"
-                    :background "#fff9c4"
+                    :background "#DAF7A6"
                     :weight 'bold
                     :box '(:line-width 1 :color "#ffeaa7" :style released-button)
                     :slant 'normal)
-;; (set-face-attribute 'shadow nil
-;;                     :foreground "#6b7280"  ;; 仅改变文字颜色
-;;                     :background "#e0e0e0"
-;;                     :slant 'italic
-;;                     :weight 'normal)
+(set-face-attribute 'shadow nil
+                    :foreground "#9A7D0A"
+                    :background "#e0e0e0"
+                    :slant 'italic
+                    :weight 'normal)
 (set-face-attribute 'link nil
                     :foreground "#2563eb"
                     :underline t)
@@ -158,7 +159,7 @@
         '(("m" "main" plain
          "%?"
          :if-new (file+head "main/${slug}.org"
-                            "#+title: ${title}\n#+filetags: :main:\n")
+                            "#+title: ${title}\n#+created: %U\n#+filetags: :main:\n")
          :immediate-finish t
          :unnarrowed t)
          ("d" "default" plain "%?"
@@ -167,22 +168,22 @@
          :unnarrowed t)
          ("r" "reference" plain "%?"
          :if-new
-         (file+head "reference/${title}.org" "#+title: ${title}\n#+filetags: :reference:\n")
+         (file+head "reference/${title}.org" "#+title: ${title}\n#+created: %U\n#+filetags: :reference:\n")
          :immediate-finish t
          :unnarrowed t)
          ("a" "article" plain "%?"
          :if-new
-         (file+head "articles/${title}.org" "#+title: ${title}\n#+filetags: :article:\n")
+         (file+head "articles/${title}.org" "#+title: ${title}\n#+created: %U\n#+filetags: :article:\n")
          :immediate-finish t
          :unnarrowed t)
           ("b" "books" plain "%?"
          :if-new
-         (file+head "articles/books/${title}.org" "#+title: ${title}\n#+filetags: :book:\n")
+         (file+head "articles/books/${title}.org" "#+title: ${title}\n#+created: %U\n#+filetags: :book:\n")
          :immediate-finish t
          :unnarrowed t)
           ("p" "people" plain "%?"
          :if-new
-         (file+head "reference/people/${title}.org" "#+title: ${title}\n#+filetags: :people:\n")
+         (file+head "reference/people/${title}.org" "#+title: ${title}\n#+created: %U\n#+filetags: :people:\n")
          :immediate-finish t
          :unnarrowed t)))
 
@@ -214,6 +215,8 @@
           :todo "WAITING") ; 等别人、外部条件的任务
          (:name "Personal"
           :tag "personal")
+         (:name "Project"
+          :tag "project")
          (:name "Work"
           :tag "work")
          (:name "Study"
@@ -266,6 +269,8 @@
    (setq org-capture-templates
          '(("s" "Slipbox" entry (file "~/workstation/org/inbox.org")
             "* %?\n")
+           ("p" "Project" entry (file "~/workstation/org/todo/project.org")
+            "* TODO  %? :project: \n")
           ("t" "Todo" entry
            (file "~/workstation/org/todo/todo.org")
            "* TODO %U %?\n")))
