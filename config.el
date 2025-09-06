@@ -162,7 +162,7 @@
                             "#+title: ${title}\n#+created: %U\n#+filetags: :main:\n")
          :immediate-finish t
          :unnarrowed t)
-         ("d" "default" plain "%?"
+         ("n" "node" plain "%?"
          :if-new (file+head "main/node/${slug}.org"
                             "#+title: ${title}\n#+created: %U\n#+filetags: :node:\n")
          :unnarrowed t)

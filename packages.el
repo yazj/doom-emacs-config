@@ -13,6 +13,8 @@
 (unpin! org-roam)
 (package! org-roam-ui)
 
+(package! org-present)
+
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
 ;; (package! some-package)
 
