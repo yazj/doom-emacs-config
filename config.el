@@ -115,37 +115,37 @@
       doom-variable-pitch-font (font-spec :family "Fira Sans" :size 16))
 ;; 中文字体设置
 (when (display-graphic-p) (dolist (charset '(kana han symbol cjk-misc bopomofo))
-        (set-fontset-font t charset (font-spec :family "LXGW WenKai" :size 26))))
+        (set-fontset-font t charset (font-spec :family "LXGW WenKai" :size 20))))
 ;; 调整中英文对齐
-(setq face-font-rescale-alist
-      '(("LXGW WenKai" . 1.4)))
-;; 全局字体优化
-(set-face-attribute 'bold nil
-                    :foreground "#2874A6" ;; "#2e7d32"
-                    :weight 'bold
-                    :underline nil
-                    :overline nil)
-(set-face-attribute 'italic nil
-                    :foreground "#9B59B6"
-                    :slant 'italic
-                    :weight 'normal)
-(set-face-attribute 'fixed-pitch nil
-                    :foreground "#3a3a3a"
-                    :background "#DAF7A6"
-                    :weight 'bold
-                    :box '(:line-width 1 :color "#ffeaa7" :style released-button)
-                    :slant 'normal)
-(set-face-attribute 'shadow nil
-                    :foreground "#9A7D0A"
-                    :background "#e0e0e0"
-                    :slant 'italic
-                    :weight 'normal)
-(set-face-attribute 'link nil
-                    :foreground "#2563eb"
-                    :underline t)
-(set-face-attribute 'warning nil
-                    :foreground "#b91c1c"
-                    :weight 'bold)
+;; (setq face-font-rescale-alist
+;;       '(("LXGW WenKai" . 1.4)))
+;;全局字体优化
+;; (set-face-attribute 'bold nil
+;;                     :foreground "#2874A6" ;; "#2e7d32"
+;;                     :weight 'bold
+;;                     :underline nil
+;;                     :overline nil)
+;; (set-face-attribute 'italic nil
+;;                     :foreground "#9B59B6"
+;;                     :slant 'italic
+;;                     :weight 'normal)
+;; (set-face-attribute 'fixed-pitch nil
+;;                     :foreground "#3a3a3a"
+;;                     :background "#DAF7A6"
+;;                     :weight 'bold
+;;                     :box '(:line-width 1 :color "#ffeaa7" :style released-button)
+;;                     :slant 'normal)
+;; (set-face-attribute 'shadow nil
+;;                     :foreground "#9A7D0A"
+;;                     :background "#e0e0e0"
+;;                     :slant 'italic
+;;                     :weight 'normal)
+;; (set-face-attribute 'link nil
+;;                     :foreground "#2563eb"
+;;                     :underline t)
+;; (set-face-attribute 'warning nil
+;;                     :foreground "#b91c1c"
+;;                     :weight 'bold)
 
 ;; =================
 ;; package配置
@@ -156,7 +156,8 @@
   (setq org-roam-directory (file-truename "~/workstation/org/"))
   (org-roam-db-autosync-mode 1)
   (setq org-roam-capture-templates
-        '(("m" "main" plain
+        '(
+         ("m" "main" plain
          "%?"
          :if-new (file+head "main/${slug}.org"
                             "#+title: ${title}\n#+created: %U\n#+filetags: :main:\n")
@@ -176,16 +177,24 @@
          (file+head "articles/${title}.org" "#+title: ${title}\n#+created: %U\n#+filetags: :article:\n")
          :immediate-finish t
          :unnarrowed t)
-          ("b" "books" plain "%?"
-         :if-new
-         (file+head "articles/books/${title}.org" "#+title: ${title}\n#+created: %U\n#+filetags: :book:\n")
-         :immediate-finish t
+         ;;  ("b" "books" plain "%?"
+         ;; :if-new
+         ;; (file+head "articles/books/${title}.org" "#+title: ${title}\n#+created: %U\n#+filetags: :book:\n")
+         ;; :immediate-finish t
+         ;; :unnarrowed t)
+         ;;  ("p" "people" plain "%?"
+         ;; :if-new
+         ;; (file+head "reference/people/${title}.org" "#+title: ${title}\n#+created: %U\n#+filetags: :people:\n")
+         ;; :immediate-finish t
+         ;; :unnarrowed t)
+
+         ("T" "Topic" plain "%?"
+         :if-new (file+head "topics/${slug}.org"
+                            "#+title: ${title}\n#+created: %U\n#+filetags: :topic:\n\n* =${title}=\n* =Problem=\n* =Research=\n* =Plan=\n* =Report=\n")
+         :immediate-finish nil
          :unnarrowed t)
-          ("p" "people" plain "%?"
-         :if-new
-         (file+head "reference/people/${title}.org" "#+title: ${title}\n#+created: %U\n#+filetags: :people:\n")
-         :immediate-finish t
-         :unnarrowed t)))
+
+          ))
 
   (cl-defmethod org-roam-node-type ((node org-roam-node))
     "Return the TYPE of NODE."
